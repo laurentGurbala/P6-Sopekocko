@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const Sauce = require("./models/sauce");
+const sauceRoutes = require("./routes/sauce");
 
 const app = express();
 
@@ -24,24 +24,7 @@ app.use((req, res, next) => {
     next();
   });
 
-// routes
 
-app.post("/api/sauces", (req, res, next) => {
-    console.log(req.body);
-    const sauce = new Sauce({
-        ...req.body
-    });
-    sauce.save()
-    .then(() => res.status(201).json({ message: "Sauce enregistrée ! "}))
-    .catch((error) => res.status(400).json({ error }));
-});
-
-app.get("/api/sauces/id")
-
-app.get("/api/sauces", (req, res, next) => {
-    Sauce.find()
-    .then((sauces) => res.status(200).json({sauces}))
-    .catch((error) => res.status(404).json({ error: error + " La sauce n'a pas été trouvé dans la base de donnée !"}));
-});
+app.use("/api/sauces", sauceRoutes);
 
 module.exports = app;
