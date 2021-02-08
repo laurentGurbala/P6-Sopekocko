@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
+const tokenSecret = "RANDOM_TOKEN_SECRET";
+
 exports.signup = (req, res, next) => {
     // Récupération du password et le hash
     bcrypt.hash(req.body.password, 10)
@@ -33,7 +35,7 @@ exports.login = (req, res, next) => {
                 userId: user._id,
                 token: jwt.sign(
                     { userId: user._id },
-                    "RANDOM_TOKEN_SECRET",
+                    tokenSecret,
                     {expiresIn: "24h"}
                 )
             });
