@@ -5,6 +5,7 @@ exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     const sauce = new Sauce({
         ...sauceObject,
+        
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
@@ -49,4 +50,49 @@ exports.getAllSauce = (req, res, next) => {
     Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(404).json({ error }));
+};
+
+exports.addVote = (req, res) => {
+    console.log(req.body);
+
+    // Chercher la sauce dans la BDD
+    Sauce.findOne({_id: req.params.id})
+    .then((sauce) => {
+        
+        // Traitement du vote
+        switch(req.body.like){
+            case 1:
+                // Si l'utilisateur n'as pas déjà voté
+                if (!sauce.usersLiked.includes(req.body.userId) && (!sauce.usersDisliked.includes(req.body.userId))) {
+                    // Ajoute l'utilisateur dans le tableau de ceux qui ont "like" la sauce
+                    sauce.usersLiked.push(req.body.userId);
+                    // Update le compteur de like
+                    sauce.likes = sauce.usersLiked.length;
+                }
+
+            break;
+            
+            case -1:
+                
+                // Si l'utilisateur n'as pas déjà voté
+                if (!sauce.usersLiked.includes(req.body.userId) && (!sauce.usersDisliked.includes(req.body.userId))) {
+
+                    // Ajoute l'utilisateur dans le tableau de ceux qui ont "like" la sauce
+                    sauce.usersDisliked.push(req.body.userId);
+                    // Update le compteur de like
+                    sauce.dislikes = sauce.usersDisliked.length;
+                }
+                
+            break;
+        }
+        // Pourquoi mon switch plante la requête ! Si la sauce n'est pas modifié dans le switch, renvoie une erreur 404 sinon renvoie une erreur 400 !!!!
+
+        // return res.status(200).json({ message: "ok"})
+        console.log(sauce);
+
+        Sauce.updateOne({_id: req.params.id}, sauce)
+        .then(() => req.status(200).json({ message: "Vote enregistré !"}))
+        .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(404).json({error}));
 };
