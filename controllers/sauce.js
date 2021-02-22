@@ -53,7 +53,6 @@ exports.getAllSauce = (req, res, next) => {
 };
 
 exports.addVote = (req, res) => {
-    console.log(req.body);
 
     // Chercher la sauce dans la BDD
     Sauce.findOne({_id: req.params.id})
@@ -68,9 +67,6 @@ exports.addVote = (req, res) => {
                     sauce.usersLiked.push(req.body.userId);
                     // Update le compteur de like
                     sauce.likes = sauce.usersLiked.length;
-                    console.log("sauce modifié");
-                    console.log(sauce.likes);
-
                 }
 
             break;
@@ -84,15 +80,10 @@ exports.addVote = (req, res) => {
                     sauce.usersDisliked.push(req.body.userId);
                     // Update le compteur de like
                     sauce.dislikes = sauce.usersDisliked.length;
-                    console.log("sauce modifié");
-                    console.log(sauce.dislikes);
                 }
                 
             break;
         }
-
-        // return res.status(200).json({ message: "ok"})
-        //console.log(sauce);
 
         // sauce.save au lieu de update one( updateone utile lors des objets anonymes)
         sauce.save()

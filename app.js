@@ -3,13 +3,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
 
+require('dotenv').config() // variable sensible env
+
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
 
 // Connexion a la base de donnee
-mongoose.connect("mongodb+srv://splint:QgwCqDH2iLc84hn@cluster0.egjx6.mongodb.net/cluster0?retryWrites=true&w=majority",
+mongoose.connect(`mongodb+srv://${process.env.dbUser}:${process.env.dbPassword}@cluster0.egjx6.mongodb.net/cluster0?retryWrites=true&w=majority`,
     {useNewUrlParser: true,
     useUnifiedTopology: true })
     .then(() => console.log("Connexion à mongoDB réussie ! "))
