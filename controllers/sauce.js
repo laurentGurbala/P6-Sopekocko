@@ -71,6 +71,18 @@ exports.addVote = (req, res) => {
 
             break;
             
+            case 0:
+                // L'utilisateur annule son vote
+                if (sauce.usersDisliked.includes(req.body.userId)) {
+                    sauce.usersDisliked.splice(sauce.usersDisliked.indexOf(req.body.userId), 1);
+                    sauce.dislikes = sauce.usersDisliked.length;
+                } 
+                else if (sauce.usersLiked.includes(req.body.userId)) {
+                    sauce.usersLiked.splice(sauce.usersLiked.indexOf(req.body.userId), 1)
+                    sauce.likes = sauce.usersLiked.length;
+                }
+            break;
+
             case -1:
                 
                 // Si l'utilisateur n'as pas déjà voté
