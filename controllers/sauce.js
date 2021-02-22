@@ -62,12 +62,15 @@ exports.addVote = (req, res) => {
         // Traitement du vote
         switch(req.body.like){
             case 1:
-                // Si l'utilisateur n'as pas déjà voté
+                // Si l'utilisateur n'as pas déjà voté (pas utile like : 0)
                 if (!sauce.usersLiked.includes(req.body.userId) && (!sauce.usersDisliked.includes(req.body.userId))) {
                     // Ajoute l'utilisateur dans le tableau de ceux qui ont "like" la sauce
                     sauce.usersLiked.push(req.body.userId);
                     // Update le compteur de like
                     sauce.likes = sauce.usersLiked.length;
+                    console.log("sauce modifié");
+                    console.log(sauce.likes);
+
                 }
 
             break;
@@ -81,18 +84,23 @@ exports.addVote = (req, res) => {
                     sauce.usersDisliked.push(req.body.userId);
                     // Update le compteur de like
                     sauce.dislikes = sauce.usersDisliked.length;
+                    console.log("sauce modifié");
+                    console.log(sauce.dislikes);
                 }
                 
             break;
         }
-        // Pourquoi mon switch plante la requête ! Si la sauce n'est pas modifié dans le switch, renvoie une erreur 404 sinon renvoie une erreur 400 !!!!
 
         // return res.status(200).json({ message: "ok"})
-        console.log(sauce);
+        //console.log(sauce);
 
-        Sauce.updateOne({_id: req.params.id}, sauce)
-        .then(() => req.status(200).json({ message: "Vote enregistré !"}))
-        .catch(error => res.status(400).json({ error }));
+        // sauce.save au lieu de update one( updateone utile lors des objets anonymes)
+        sauce.save()
+        .then(() => res.status(200).json({ message: "Vote enregistré !"}))
+        .catch(error => {
+            res.status(400).json({ error : error });
+            console.log(error);
+        } );
     })
-    .catch(error => res.status(404).json({error}));
+    .catch(error => res.status(404).json({ error : error }));
 };
