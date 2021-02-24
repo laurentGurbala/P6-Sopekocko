@@ -44,4 +44,5 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+// va se mettre à l'écoute du port : port par défaut ou port 3000
 server.listen(port);
