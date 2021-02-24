@@ -1,5 +1,6 @@
 const Sauce = require("../models/sauce");
 const fs = require("fs");
+const sauce = require("../models/sauce");
 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
@@ -18,9 +19,25 @@ exports.modifySauce = (req, res, next) => {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     } : {...req.body};
+    console.log("La sauce de la requete :");
     console.log(sauceObject);
+    console.log("image :" + sauceObject.imageUrl);
+    
+    console.log("La sauce de la BDD :");
 
-    // TODO : SUPPRIMER L'IMAGE PRECEDENTE DU DOSSIER
+
+    // SUPPRIMER L'IMAGE PRECEDENTE DU DOSSIER
+    if (sauceObject.imageUrl) {
+        Sauce.findOne({_id: req.params.id})
+        .then((sauce) => {
+            console.log(sauce)
+            const filename = sauce.imageUrl.split("/images/")[1];
+            fs.unlink(`images/${filename}`, ()=> {
+                console.log("image supprimé");
+            });
+        })
+        .catch(error => res.status(400).json({error}));
+    }
 
     Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: "Sauce modifiée !"}))
