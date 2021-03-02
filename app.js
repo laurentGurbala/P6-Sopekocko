@@ -2,13 +2,15 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
+const helmet = require("helmet");
 
-require('dotenv').config() // variable sensible env
+require('dotenv').config(); // variable sensible env
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
+app.use(helmet());
 
 // Connexion a la base de donnee
 mongoose.connect(`mongodb+srv://${process.env.dbUserSimple}:${process.env.dbPasswordSimple}@cluster0.egjx6.mongodb.net/cluster0?retryWrites=true&w=majority`,
